@@ -5,15 +5,22 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
         lowercase: true
     },
     passwordHash: String,
-    authProvider: "local" || "firebase_migrated",
+    authProvider: {
+        type: String,
+        default: "local"
+    }, 
     mustResetPassword: {
         type: Boolean,
         default: false
     },
-    createdAt: Date,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     lastLogin: Date
 })
 

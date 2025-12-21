@@ -3,3 +3,7 @@ js/firebase-config.js
 .vscode/
 .firebaserc
 *.json
+.env
+client/node_modules/
+server/node_modules/
+server/node_modules/.bin/
