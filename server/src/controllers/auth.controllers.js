@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import sendMail from "../utils/mail.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -69,7 +70,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {id: user._id, email: user.email},
             process.env.JWT_SECRET,
-            {expiresIn: "1h"}
+            {expiresIn: process.env.JWT_EXPIRES_IN}
         )
         // console.log("passed");
 
@@ -116,10 +117,35 @@ export const forgetPassword = async (req, res) => {
         // Mock for now, later will integrate nodemailer
         console.log(`
         Password Reset Link:
-        http://localhost:3000/reset-password/${resetToken}
+        http://localhost:3000/api/auth/reset-password/${resetToken}
         `);
 
-        res.json({message: "If email exists, a reset link has been sent"})
+        const resetURL = `${process.env.FRONTEND_URL}/api/auth/reset-password/${resetToken}`;
+        const message = `
+            <h2 style="fontweight: bold;">Password Reset</h2>
+            <p>You requested a password reset for Rock Paper Scissors.</p>
+            <p>Click the link below to reset your password:</p>
+            <a href="${resetURL} style="text-decoration: none;">Reset Password</a>
+            <p style="color:red;">This link expires in 15 minutes.<p>
+        `;
+        // console.log("pass");
+        
+        try {
+            await sendMail({
+                to: "kishorkumargs85@gmail.com",
+                subject: "RPS Password Reset",
+                html: message
+            });
+            // console.log("pass");
+        } catch (err) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+
+            return res.status(500).json({ message: "Email could not be sent" });
+        }
+
+        res.json({message: "Password reset link has been sent for you email"})
     } catch (e) {
         res.status(500).json({message: "Password reset failed"});
     }
