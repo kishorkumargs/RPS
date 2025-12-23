@@ -54,6 +54,7 @@ export const login = async (req, res) => {
         // console.log("passed");
 
         // Don't know if I want to add await, test and find out
+        // 1 time tested, works perfect
         const isMatch = bcrypt.compare(password, user.passwordHash);
 
         // If the password doesn't match, send a error message
