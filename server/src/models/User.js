@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     resetPasswordToken: String,
     resetPasswordExpires: Date,
 
+    // For issuing new JWT token
+    refreshToken: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now

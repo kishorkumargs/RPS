@@ -4,6 +4,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// Signup logic
 export const signup = async (req, res) => {
     try {
         // Get name, email, password from req
@@ -40,6 +41,7 @@ export const signup = async (req, res) => {
     }
 }
 
+// Login logic
 export const login = async (req, res) => {
     try {
         // Get the email, password from req
@@ -73,6 +75,9 @@ export const login = async (req, res) => {
             {expiresIn: process.env.JWT_EXPIRES_IN}
         )
         // console.log("passed");
+        // Generate random refresh token
+        const refreshToken = crypto.randomBytes(32).toString("hex");
+        user.refreshToken = refreshToken;
 
         // Update last login date
         user.lastLogin = new Date();
@@ -81,6 +86,7 @@ export const login = async (req, res) => {
         // Send the token in the response
         res.json({
             token, 
+            refreshToken,
             user: {
                 id: user._id,
                 email: user.email,
@@ -95,6 +101,7 @@ export const login = async (req, res) => {
     }
 }
 
+// Forget password logic
 export const forgetPassword = async (req, res) => {
     try {
         const {email} = req.body;
@@ -151,6 +158,7 @@ export const forgetPassword = async (req, res) => {
     }
 }
 
+// Reset password logic
 export const resetPassword = async (req, res) => {
     try {
         // Retreive the token from the params, new password from the body
@@ -183,4 +191,40 @@ export const resetPassword = async (req, res) => {
     } catch (e) {
         res.status(500).json({message: "Password reset failed"})
     }
+}
+
+// Refresh token generation logic
+export const refreshToken = async (req, res) => {
+    // Retrieve the refresh token
+    const { refreshToken } = req.body;
+
+    const user = await User.find({refreshToken});
+
+    if(!user){
+        return res.status(401).json({message: "No refresh token"});
+    }
+
+    const newAccessToken = jwt.sign(
+        {id: user._id, email: user.email},
+        process.env.JWT_SECRET,
+        {expiresIn: process.env.JWT_EXPIRES_IN}
+    );
+    res.json({accessToken: newAccessToken});
+}
+
+// Logout logic
+export const logout = async (req, res) => {
+    const { refreshToken } = req.body;
+
+    if(!refreshToken){
+        return res.sendStatus(204);
+    }
+
+    const user = await User.findOne({refreshToken});
+
+    if(user){
+        user.refreshToken = null;
+        await user.save();
+    }
+    res.json({message: "Logged out successfully"});
 }

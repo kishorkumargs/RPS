@@ -9,4 +9,9 @@ const gameStatsSchema = new mongoose.Schema({
     ties: Number,
     updatedAt: Date
 })
-export default mongoose.model("GameStats", gameStatsSchema);
+
+// Add index for quick sorting and searching
+gameStatsSchema.index({highScore: -1})
+
+export default mongoose.models.GameStats ||
+  mongoose.model("GameStats", gameStatsSchema);
