@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "./ModeSelect.css";
 
-function ModeSelect() {
+function ModeSelect({ playSound }) {
   const navigate = useNavigate();
 
   return (
@@ -10,8 +10,8 @@ function ModeSelect() {
       <title>Select Mode</title>
       <p className="text-xl font-bold text-center ">Choose Your Game Mode</p>
       <p className="text-sm text-center text-neutral-500">Play the way you want - casual or competitive</p>
-      <div className="flex gap-2 px-3 py-2 justify-center">
-        <div className="shiny-card text-center max-w-sm border-3 border-white rounded-lg h-fit px-2 py-2 m-1 hover:scale-102 hover:border-cyan-400 cursor-pointer active:scale-98">
+      <div className="group flex gap-2 px-3 py-2 justify-center">
+        <div className="shiny-card group-hover:opacity-50 group-hover:blur-[1px] hover:opacity-100 hover:blur-none text-center max-w-sm border-3 border-white rounded-lg h-fit px-2 py-2 m-1 hover:scale-102 hover:border-cyan-400 cursor-pointer active:scale-98" onMouseEnter={() => playSound("hover")}>
           <p className="m-1 text-2xl">🎲 🤖</p>
           <p className="text-xl font-bold m-1">Random Bot</p>
           <p className="m-2">Play against a purely random opponent.
@@ -22,7 +22,7 @@ function ModeSelect() {
           </button>
         </div>
 
-        <div className="shiny-card text-center max-w-sm border-3 border-white rounded-lg h-fit px-2 py-2 m-1 hover:scale-102 hover:border-cyan-400 cursor-pointer active:scale-98">
+        <div className="shiny-card group-hover:opacity-50 group-hover:blur-[1px] hover:opacity-100 hover:blur-none text-center max-w-sm border-3 border-white rounded-lg h-fit px-2 py-2 m-1 hover:scale-102 hover:border-cyan-400 cursor-pointer active:scale-98" onMouseEnter={() => playSound("hover")}>
           <p className="m-1 text-2xl">🧠 🤖</p>
           <p className="text-xl font-bold m-1">AI Bot</p>
           <p className="m-2">Face an adaptive opponent that learns your playstyle.</p>

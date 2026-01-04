@@ -1,23 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { initSounds, unlockAudio } from "../services/sound";
 import Header from "../components/Header";
 
-function Home() {
+function Home({ playSound }) {
   const navigate = useNavigate();
   const [savedTheme, setSavedTheme] = useState(
     localStorage.getItem("theme") || "dark"
   );
-  let sounds;
-  function playSound(type) {
-      // Play sound based on result
-      unlockAudio().then(() => {
-        sounds = sounds || initSounds();
   
-        sounds[type]?.play();
-        console.log("Played sound: " + type);
-      });
-    }
   return (
     <div className="min-h-screen min-w-fit flex flex-col justify-center bg-neutral-900 text-white">
       <title>Homepage</title>

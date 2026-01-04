@@ -1,9 +1,9 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import api from "../services/api";
 
-function Login() {
+function Login({ playSound }) {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   // Email and password is Link state variable as it must be updated from form using onChange event handler
@@ -11,31 +11,45 @@ function Login() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if(isAuthenticated) navigate("/select-mode");
+    if (isAuthenticated) navigate("/select-mode");
   }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     navigate("/select-mode");
-      // Prevent the page from reloading after the form submission
+    // Prevent the page from reloading after the form submission
 
-      try {
-        const res = await api.post("/login", {email, password});
-        login(res.data.user, res.data.accessToken);
-        navigate("/game");
-      } catch (e) {
-        alert("Invalid credentials", e);
-      }
+    try {
+      const res = await api.post("/login", { email, password });
+      login(res.data.user, res.data.accessToken);
+      navigate("/game");
+    } catch (e) {
+      alert("Invalid credentials", e);
+    }
   };
 
   const goToSignup = () => {
+    playSound("btn");
     navigate("/signup");
   };
 
   return (
     <div className="flex justify-center relative bg-neutral-900 h-dvh">
-      <button className="text-black rounded-sm bg-white font-bold absolute top-4 left-4 px-3 py-2" onClick={() => navigate("/")} id="home-btn">Home</button>
-      <button className="text-black rounded-sm bg-white font-bold absolute top-4 right-4 px-3 py-2 toggle-theme" id="theme-toggled">Light Mode</button>
+      <button
+        className="text-black rounded-sm bg-white font-bold absolute top-4 left-4 px-3 py-2"
+        onClick={() => {
+          playSound("btn");
+          navigate("/");
+        }}
+      >
+        Home
+      </button>
+      <button
+        className="text-black rounded-sm bg-white font-bold absolute top-4 right-4 px-3 py-2 toggle-theme"
+        onClick={() => playSound("btn")}
+      >
+        Light Mode
+      </button>
       <div className="container max-w-sm border-3 flex flex-col m-20 px-8 py-10 text-white bg-neutral-800 border-white rounded-lg h-fit">
         <div className="text-center mb-4">
           <h2 className="heading font-bold mt-2">Rock Paper Scissors</h2>
@@ -81,7 +95,11 @@ function Login() {
                 Remember me
               </label>
             </div>
-            <Link to="/forgot-password" id="forgotPassword" className="text-decoration-none">
+            <Link
+              to="/forgot-password"
+              id="forgotPassword"
+              className="text-decoration-none"
+            >
               Forgot password?
             </Link>
           </div>

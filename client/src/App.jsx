@@ -7,25 +7,36 @@ import Game from "./pages/Game";
 import ModeSelect from "./pages/ModeSelect";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { unlockAudio, initSounds } from "./services/sound";
 
 function App(){
+  let sounds;
+  function playSound(type) {
+      // Play sound based on result
+      unlockAudio().then(() => {
+        sounds = sounds || initSounds();
+  
+        sounds[type]?.play();
+        console.log("Played sound: " + type);
+      });
+    }
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/" element={<Home playSound={playSound}/>}/>
+        <Route path="/login" element={<Login playSound={playSound}/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword playSound={playSound}/>} />
+        <Route path="/reset-password/:token" element={<ResetPassword playSound={playSound}/>} />
         <Route path="/signup" element={<Signup/>}/>
         <Route path="/select-mode" element={
           // <ProtectedRoute>
-            <ModeSelect/>
+            <ModeSelect playSound={playSound}/>
           //  </ProtectedRoute>
         }/>
         <Route path="/game" element={
           // <ProtectedRoute>
-            <Game/>
+            <Game playSound={playSound}/>
           //  </ProtectedRoute>
         }/>
       </Routes>
